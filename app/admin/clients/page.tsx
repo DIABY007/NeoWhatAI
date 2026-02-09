@@ -5,8 +5,12 @@ import { supabase } from '@/lib/supabase/client';
 import Link from 'next/link';
 import type { Client } from '@/types/database';
 
+interface ClientWithStats extends Client {
+  messagesCount: number;
+}
+
 export default function ClientsPage() {
-  const [clients, setClients] = useState<Client[]>([]);
+  const [clients, setClients] = useState<ClientWithStats[]>([]);
   const [loading, setLoading] = useState(true);
   const [toggling, setToggling] = useState<string | null>(null);
   const [deleting, setDeleting] = useState<string | null>(null);
@@ -23,7 +27,25 @@ export default function ClientsPage() {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setClients(data || []);
+
+      // Charger le nombre de messages pour chaque client
+      const clientsWithStats = await Promise.all(
+        (data || []).map(async (client) => {
+          const { count, error: countError } = await supabase
+            .from('logs')
+            .select('*', { count: 'exact', head: true })
+            .eq('client_id', client.id);
+
+          if (countError) {
+            console.error('Error counting messages for client:', client.id, countError);
+            return { ...client, messagesCount: 0 };
+          }
+
+          return { ...client, messagesCount: count || 0 };
+        })
+      );
+
+      setClients(clientsWithStats);
     } catch (error) {
       console.error('Error loading clients:', error);
     } finally {
@@ -138,9 +160,15 @@ export default function ClientsPage() {
                     {client.is_active ? 'Actif' : 'En pause'}
                   </span>
                 </div>
-                <p className="text-sm text-gray-500 mb-2">
+                <p className="text-sm text-gray-500 mb-3">
                   Session: {client.whatsapp_session_id.slice(0, 20)}...
                 </p>
+                <div className="bg-blue-50 border border-blue-200 rounded-lg px-3 py-2 mb-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium text-gray-700">📨 Messages répondus</span>
+                    <span className="text-lg font-bold text-blue-600">{client.messagesCount}</span>
+                  </div>
+                </div>
                 <p className="text-xs text-gray-400 mb-4">
                   Créé le {new Date(client.created_at).toLocaleDateString('fr-FR')}
                 </p>
