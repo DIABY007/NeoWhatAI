@@ -95,10 +95,33 @@ Voir le dossier `memory-bank/` pour :
 
 ## 🚢 Déploiement
 
-1. Push sur GitHub
-2. Connecter le repo à Vercel
-3. Configurer les variables d'environnement dans Vercel
-4. Configurer les webhooks WasenderAPI avec l'URL de production
+Le projet est prêt pour le déploiement sur Vercel ! 
+
+### Fichiers de configuration créés :
+- ✅ `vercel.json` - Configuration Vercel avec timeouts optimisés
+- ✅ `.vercelignore` - Exclusion des fichiers inutiles
+- ✅ `env.example` - Template des variables d'environnement
+- ✅ `next.config.ts` - Configuration Next.js optimisée pour la production
+
+### Guide de déploiement complet
+
+📖 **Consultez [VERCEL_DEPLOYMENT.md](./VERCEL_DEPLOYMENT.md) pour un guide détaillé étape par étape.**
+
+### Déploiement rapide :
+
+1. **Push sur GitHub** ✅ (déjà fait)
+2. **Connecter le repo à Vercel** :
+   - Allez sur [vercel.com](https://vercel.com)
+   - Importez le dépôt `DIABY007/NeoWhatAI`
+3. **Configurer les variables d'environnement** :
+   - Utilisez le fichier `env.example` comme référence
+   - Ajoutez toutes les variables dans Vercel (Production, Preview, Development)
+4. **Déployer** :
+   - Cliquez sur "Deploy"
+   - Attendez la fin du build
+5. **Configurer WasenderAPI** :
+   - Mettez à jour l'URL du webhook avec l'URL Vercel
+   - Utilisez le même `WHATSAPP_VERIFY_TOKEN`
 
 ## 📝 License
 
